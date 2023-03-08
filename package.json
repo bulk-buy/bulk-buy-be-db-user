@@ -1,0 +1,13 @@
+{
+  "name": "bulk-buy-be",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node ./src/app.js"
+  },
+  "dependencies": {
+    "debug": "^4.3.4",
+    "express": "^4.18.2",
+    "morgan": "^1.10.0"
+  }
+}
