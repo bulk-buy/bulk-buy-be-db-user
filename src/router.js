@@ -6,16 +6,16 @@
  * Module dependencies.
  */
 
-var express = require('express');
+const express = require("express");
 
 // ===============
 // ROUTES
 // ===============
 
-var router = express.Router();
+const router = express.Router();
 
-router.get('/', function(req, res, next) {
-  res.send('respond with a resource');
+router.get("/", (req, res) => {
+  res.send("respond with a resource");
 });
 
 // ===============
