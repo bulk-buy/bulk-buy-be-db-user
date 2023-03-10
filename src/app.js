@@ -68,53 +68,63 @@ const normalizePort = (val) => {
  */
 
 const port = normalizePort(config.port);
-app.set("port", port);
 
 /**
  * Listen on provided port, on all network interfaces.
  */
 
-const server = app.listen(port);
+let server;
+const start = () => {
+  if (server && server.listening) return;
+  server = app.listen(port);
+  server.start = start;
 
-/**
- * Event listener for HTTP server "error" event.
- * @param {Error} error
- */
+  /**
+   * Event listener for HTTP server "error" event.
+   * @param {Error} error
+   */
 
-server.on("error", (error) => {
-  if (error.syscall !== "listen") {
-    throw error;
-  }
-
-  const bind = typeof port === "string" ? `Pipe ${port}` : `Port ${port}`;
-
-  // handle specific listen errors with friendly messages
-  switch (error.code) {
-    case "EACCES":
-      console.error(`${bind} requires elevated privileges`);
-      process.exit(1);
-      break;
-    case "EADDRINUSE":
-      console.error(`${bind} is already in use`);
-      process.exit(1);
-      break;
-    default:
+  server.on("error", (error) => {
+    if (error.syscall !== "listen") {
       throw error;
-  }
-});
+    }
 
-/**
- * Event listener for HTTP server "listening" event.
- */
+    const bind = typeof port === "string" ? `Pipe ${port}` : `Port ${port}`;
 
-server.on("listening", () => {
-  const addr = server.address();
-  const bind = typeof addr === "string" ? `pipe ${addr}` : `port ${addr.port}`;
-  debug(`Listening on ${bind}`);
-});
+    // handle specific listen errors with friendly messages
+    switch (error.code) {
+      case "EACCES":
+        console.error(`${bind} requires elevated privileges`);
+        process.exit(1);
+        break;
+      case "EADDRINUSE":
+        console.error(`${bind} is already in use`);
+        process.exit(1);
+        break;
+      default:
+        throw error;
+    }
+  });
+
+  /**
+   * Event listener for HTTP server "listening" event.
+   */
+
+  server.on("listening", () => {
+    const addr = server.address();
+    const bind =
+      typeof addr === "string" ? `Pipe ${addr}` : `Port ${addr.port}`;
+    debug(`Listening on ${bind}`);
+  });
+};
+start();
 
 // ===============
 // EXPORTS
 // ===============
 
-module.exports = server;
+module.exports = {
+  get server() {
+    return server;
+  },
+};
