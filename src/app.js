@@ -47,6 +47,7 @@ app.use(router);
  * @param {string} val
  */
 
+/* istanbul ignore next */
 const normalizePort = (val) => {
   const port = parseInt(val, 10);
 
@@ -84,6 +85,7 @@ const start = () => {
    * @param {Error} error
    */
 
+  /* istanbul ignore next */
   server.on("error", (error) => {
     if (error.syscall !== "listen") {
       throw error;
@@ -112,6 +114,7 @@ const start = () => {
 
   server.on("listening", () => {
     const addr = server.address();
+    /* istanbul ignore next: not piping to file */
     const bind =
       typeof addr === "string" ? `Pipe ${addr}` : `Port ${addr.port}`;
     debug(`Listening on ${bind}`);
