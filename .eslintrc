@@ -17,5 +17,8 @@
     "no-plusplus": ["error", { "allowForLoopAfterthoughts": true }],
     "strict": 1,
     "import/no-extraneous-dependencies": 1
+  },
+  "env": {
+    "mocha": true
   }
 }

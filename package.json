@@ -9,7 +9,7 @@
     "eslint:fix": "eslint --fix \"src/**/*.js\" \"test/**/*.js\"",
     "pretest": "npm run prettier --if-present && npm run eslint --if-present",
     "pretest:fix": "npm run prettier:fix --if-present && npm run eslint:fix --if-present",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "nyc --reporter=html --reporter=text mocha --reporter spec --bail --check-leaks test/",
     "start": "node ./src/app.js"
   },
   "dependencies": {
@@ -22,6 +22,19 @@
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-prettier": "^4.2.1",
-    "prettier": "^2.8.8"
+    "mocha": "^10.2.0",
+    "nyc": "^15.1.0",
+    "prettier": "^2.8.8",
+    "supertest": "^6.3.3"
+  },
+  "nyc": {
+    "all": true,
+    "include": [
+      "src/**"
+    ],
+    "branches": 100,
+    "lines": 100,
+    "functions": 100,
+    "statements": 100
   }
 }
