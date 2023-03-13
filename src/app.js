@@ -18,6 +18,7 @@ const process = require("node:process");
 const debug = require("debug")("bulk-buy-be:server");
 const express = require("express");
 const logger = require("morgan");
+const compression = require("compression");
 
 /**
  * Internal dependencies.
@@ -34,6 +35,7 @@ const app = express();
 
 app.use(logger("dev"));
 app.use(express.json());
+app.use(compression());
 
 app.get("/favicon.ico", (req, res) => res.sendStatus(204));
 app.use(router);
