@@ -121,8 +121,34 @@ const start = () => {
       typeof addr === "string" ? `Pipe ${addr}` : `Port ${addr.port}`;
     debug(`Listening on ${bind}`);
   });
+
+  /**
+   * Event listener for custom "closed" event.
+   * @param {Error} err
+   */
+
+  server.on("closed", (err) => {
+    if (!err) debug("HTTP server closed");
+  });
 };
 start();
+
+// ===============
+// GRACEFUL SHUTDOWN
+// ===============
+
+process.on("SIGTERM", () => {
+  debug(
+    `SIGTERM signal received: ${
+      server.listening ? "closing HTTP server" : "HTTP server already closed"
+    }`
+  );
+
+  server.close((err) => {
+    // emit custom "closed" event as "close" event does not contain params
+    server.emit("closed", err);
+  });
+});
 
 // ===============
 // EXPORTS

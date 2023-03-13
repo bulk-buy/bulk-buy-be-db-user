@@ -5,6 +5,13 @@
 // ===============
 
 /**
+ * Node dependencies.
+ */
+
+const assert = require("node:assert").strict;
+const process = require("node:process");
+
+/**
  * Module dependencies.
  */
 
@@ -43,8 +50,41 @@ describe("express", () => {
     });
   });
 
-  // clean up
+  describe("graceful shutdown", () => {
+    describe("SIGTERM when server is running", () => {
+      it("should stop listening", (done) => {
+        assert.equal(app.server.listening, true, "should be listening");
+
+        app.server.once("closed", (err) => {
+          assert.ifError(err, "callback should not have error param");
+          assert.equal(app.server.listening, false, "should not be listening");
+          done();
+        });
+
+        process.emit("SIGTERM");
+      });
+    });
+
+    describe("SIGTERM when server is not running", () => {
+      it("should not throw error", (done) => {
+        assert.equal(app.server.listening, false, "should not be listening");
+
+        app.server.once("closed", (err) => {
+          assert.ok(err, "callback should have error param");
+          assert.equal(app.server.listening, false, "should not be listening");
+          done();
+        });
+
+        process.emit("SIGTERM");
+      });
+    });
+  });
+
   after((done) => {
-    app.server.close(done);
+    app.server.once("closed", () => {
+      done();
+    });
+
+    process.emit("SIGTERM");
   });
 });
