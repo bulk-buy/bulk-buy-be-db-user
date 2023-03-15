@@ -77,9 +77,20 @@ const port = normalizePort(config.port);
  */
 
 let server;
-const start = () => {
-  if (server && server.listening) return;
-  server = app.listen(port);
+const start = (cb) => {
+  if (server && server.listening) {
+    // will throw error because server is already listening
+    try {
+      server.listen();
+    } catch (err) {
+      /* istanbul ignore else: there is no else path */
+      if (typeof cb === "function") cb(err);
+      return;
+    }
+  }
+  server = app.listen(port, () => {
+    if (typeof cb === "function") cb();
+  });
   server.start = start;
 
   /**

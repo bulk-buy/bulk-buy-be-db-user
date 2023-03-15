@@ -28,8 +28,38 @@ const app = require("../src/app");
 // ===============
 
 describe("express", () => {
-  before(() => {
-    app.server.start();
+  describe("startup", () => {
+    before((done) => {
+      app.server.once("closed", () => {
+        done();
+      });
+
+      process.emit("SIGTERM");
+    });
+
+    describe("app.server.start() when server is not running", () => {
+      it("should start listening", (done) => {
+        assert.equal(app.server.listening, false, "should not be listening");
+
+        app.server.start((err) => {
+          assert.ifError(err, "callback should not have error param");
+          assert.equal(app.server.listening, true, "should be listening");
+          done();
+        });
+      });
+    });
+
+    describe("app.server.start() called when server is running", () => {
+      it("should not throw error", (done) => {
+        assert.equal(app.server.listening, true, "should be listening");
+
+        app.server.start((err) => {
+          assert.ok(err, "callback should have error param");
+          assert.equal(app.server.listening, true, "should be listening");
+          done();
+        });
+      });
+    });
   });
 
   describe("routing", () => {
