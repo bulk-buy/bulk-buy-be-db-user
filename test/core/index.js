@@ -21,13 +21,13 @@ const request = require("supertest");
  * Internal dependencies.
  */
 
-const app = require("../src/app");
+const app = require("../../src/app");
 
 // ===============
 // TESTS
 // ===============
 
-describe("express", () => {
+describe(`express (NODE_ENV=${process.env.NODE_ENV})`, () => {
   describe("startup", () => {
     before((done) => {
       app.server.once("closed", () => {

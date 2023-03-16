@@ -8,16 +8,13 @@
  * Node dependencies.
  */
 
-const console = require("node:console");
 const process = require("node:process");
 
 /**
  * Module dependencies.
  */
 
-const debug = require("debug")("bulk-buy-be:server");
 const express = require("express");
-const logger = require("morgan");
 const compression = require("compression");
 
 /**
@@ -25,15 +22,30 @@ const compression = require("compression");
  */
 
 const config = require("./config");
+const fileLogger = require("./services/fileLogger");
 const router = require("./router");
+
+// ===============
+// VARIABLES
+// ===============
+
+const app = express();
+const logger = fileLogger.getLogger("express");
 
 // ===============
 // EXPRESS CONFIG
 // ===============
 
-const app = express();
-
-app.use(logger("dev"));
+app.use(
+  fileLogger.framework.connectLogger(fileLogger.getLogger("access"), {
+    level: "auto",
+    statusRules: [
+      { from: 100, to: 399, level: "debug" },
+      { from: 400, to: 499, level: "warn" },
+      { from: 500, to: 599, level: "error" },
+    ],
+  })
+);
 app.use(express.json());
 app.use(compression());
 
@@ -89,6 +101,7 @@ const start = (cb) => {
     }
   }
   server = app.listen(port, () => {
+    fileLogger.configure();
     if (typeof cb === "function") cb();
   });
   server.start = start;
@@ -109,11 +122,11 @@ const start = (cb) => {
     // handle specific listen errors with friendly messages
     switch (error.code) {
       case "EACCES":
-        console.error(`${bind} requires elevated privileges`);
+        logger.error(`${bind} requires elevated privileges`);
         process.exit(1);
         break;
       case "EADDRINUSE":
-        console.error(`${bind} is already in use`);
+        logger.error(`${bind} is already in use`);
         process.exit(1);
         break;
       default:
@@ -130,7 +143,7 @@ const start = (cb) => {
     /* istanbul ignore next: not piping to file */
     const bind =
       typeof addr === "string" ? `Pipe ${addr}` : `Port ${addr.port}`;
-    debug(`Listening on ${bind}`);
+    logger.info(`Listening on ${bind}`);
   });
 
   /**
@@ -139,7 +152,10 @@ const start = (cb) => {
    */
 
   server.on("closed", (err) => {
-    if (!err) debug("HTTP server closed");
+    if (!err) {
+      logger.info("HTTP server closed");
+      fileLogger.shutdown();
+    }
   });
 };
 start();
@@ -149,7 +165,7 @@ start();
 // ===============
 
 process.on("SIGTERM", () => {
-  debug(
+  logger.debug(
     `SIGTERM signal received: ${
       server.listening ? "closing HTTP server" : "HTTP server already closed"
     }`
