@@ -22,6 +22,7 @@ const compression = require("compression");
  */
 
 const config = require("./config");
+const database = require("./services/database");
 const fileLogger = require("./services/fileLogger");
 const router = require("./router");
 
@@ -50,6 +51,10 @@ app.use(express.json());
 app.use(compression());
 
 app.get("/favicon.ico", (req, res) => res.sendStatus(204));
+app.use((req, res, next) => {
+  if (database.isConnected()) next();
+  else res.sendStatus(503);
+});
 app.use(router);
 
 // ===============
@@ -100,8 +105,9 @@ const start = (cb) => {
       return;
     }
   }
-  server = app.listen(port, () => {
+  server = app.listen(port, async () => {
     fileLogger.configure();
+    await database.connectWithRetry();
     if (typeof cb === "function") cb();
   });
   server.start = start;
@@ -151,9 +157,10 @@ const start = (cb) => {
    * @param {Error} err
    */
 
-  server.on("closed", (err) => {
+  server.on("closed", async (err) => {
     if (!err) {
       logger.info("HTTP server closed");
+      await database.shutdown();
       fileLogger.shutdown();
     }
   });
@@ -184,5 +191,8 @@ process.on("SIGTERM", () => {
 module.exports = {
   get server() {
     return server;
+  },
+  get database() {
+    return database;
   },
 };
