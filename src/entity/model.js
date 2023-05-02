@@ -20,11 +20,35 @@ const options = {
   validator: {
     $jsonSchema: {
       bsonType: "object",
-      required: ["name"],
+      required: ["email"],
       properties: {
-        name: {
+        firstName: {
+          bsonType: "string",
+          description: "must be a string",
+        },
+        lastName: {
+          bsonType: "string",
+          description: "must be a string",
+        },
+        phone: {
+          bsonType: "string",
+          description: "must be a string",
+        },
+        email: {
           bsonType: "string",
           description: "is required, must be a string",
+        },
+        streetName: {
+          bsonType: "string",
+          description: "must be a string",
+        },
+        block: {
+          bsonType: "string",
+          description: "must be a string",
+        },
+        unit: {
+          bsonType: "string",
+          description: "must be a string",
         },
         deletedAt: {
           bsonType: "date",
@@ -41,7 +65,7 @@ mongoose.connection.on("open", () => {
   mongoose.connection.db
     .createCollection(config.dbTableName, options)
     .then((collection) => {
-      collection.createIndex({ name: 1 });
+      collection.createIndex({ email: 1 });
       collection.createIndex({ deletedAt: 1 });
     })
     .catch((err) => {
@@ -61,9 +85,30 @@ mongoose.connection.on("open", () => {
 // mongoose schema
 const schema = new mongoose.Schema(
   {
-    name: {
+    firstName: {
+      type: String,
+    },
+    lastName: {
+      type: String,
+    },
+    phone: {
+      type: String,
+    },
+    email: {
       type: String,
       required: true,
+    },
+    streetName: {
+      type: String,
+    },
+    block: {
+      type: String,
+    },
+    unit: {
+      type: String,
+    },
+    postalCode: {
+      type: String,
     },
     deletedAt: {
       type: Date,

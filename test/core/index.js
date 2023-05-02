@@ -166,7 +166,7 @@ describeGitHubActions("database CRUD operations", () => {
   });
 
   const inputEntity = {
-    name: "entityName",
+    email: "a@a.com",
   };
   let initialRecords;
   let createdEntity;
@@ -201,7 +201,7 @@ describeGitHubActions("database CRUD operations", () => {
           if (err) done(err);
           else {
             // explicit keys
-            assert.ok("name" in res.body, "should have name");
+            assert.ok("email" in res.body, "should have email");
 
             // implicit keys
             assert.ok("_id" in res.body, "should have _id");
@@ -409,7 +409,7 @@ describeGitHubActions("database CRUD operations", () => {
       it("should return 400", (done) => {
         request(app.server)
           .patch(`/${config.dbTableName}/${createdEntity._id}`)
-          .send({ _id: `${createdEntity._id}`, name: "newName1" })
+          .send({ _id: `${createdEntity._id}`, email: "newName1" })
           .expect(400, done);
       });
     });
@@ -418,7 +418,7 @@ describeGitHubActions("database CRUD operations", () => {
       it("should return 404", (done) => {
         request(app.server)
           .patch(`/${config.dbTableName}/111111111111111111111111`)
-          .send({ _id: "111111111111111111111111", __v: 0, name: "newName" })
+          .send({ _id: "111111111111111111111111", __v: 0, email: "newName" })
           .expect(404, done);
       });
     });
@@ -430,14 +430,14 @@ describeGitHubActions("database CRUD operations", () => {
           .send({
             _id: `${createdEntity._id}`,
             __v: createdEntity.__v,
-            name: "newName1",
+            email: "newName1",
           })
           .expect(200)
           .end((err, res) => {
             if (err) done(err);
             else {
               // explicit keys
-              assert.ok(res.body.name === "newName1", "should update name");
+              assert.ok(res.body.email === "newName1", "should update email");
 
               // implicit keys
               assert.equal(
@@ -457,7 +457,7 @@ describeGitHubActions("database CRUD operations", () => {
       it("should conflict", (done) => {
         request(app.server)
           .patch(`/${config.dbTableName}/${createdEntity._id}`)
-          .send({ _id: `${createdEntity._id}`, __v: 0, name: "newName2" })
+          .send({ _id: `${createdEntity._id}`, __v: 0, email: "newName2" })
           .expect(409, done);
       });
     });
