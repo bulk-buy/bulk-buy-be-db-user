@@ -15,6 +15,7 @@ const process = require("node:process");
  */
 
 const express = require("express");
+const cors = require("cors");
 const compression = require("compression");
 
 /**
@@ -47,6 +48,7 @@ app.use(
   })
 );
 app.use(express.json());
+app.use(cors());
 app.use(compression());
 
 app.get("/favicon.ico", (req, res) => res.sendStatus(204));
