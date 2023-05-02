@@ -1,0 +1,5 @@
+.git
+.github
+coverage
+logs
+node_modules
