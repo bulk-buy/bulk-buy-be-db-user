@@ -31,5 +31,5 @@ const clearRequireCache = function () {
 exec("mongo namespace --eval 'db.entities.drop()'");
 delete process.env.PORT;
 clearRequireCache();
-require("./core");
+require("./core"); /* eslint-disable-line import/newline-after-import */
 exec("mongo namespace --eval 'db.entities.drop()'");
