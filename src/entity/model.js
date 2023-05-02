@@ -50,6 +50,10 @@ const options = {
           bsonType: "string",
           description: "must be a string",
         },
+        postalCode: {
+          bsonType: "string",
+          description: "must be a string",
+        },
         deletedAt: {
           bsonType: "date",
         },
