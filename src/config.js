@@ -42,4 +42,14 @@ module.exports = {
       path.resolve(__dirname, "../logs", this.instanceId)
     );
   },
+
+  get dbEndpoint() {
+    return process.env.DB_ENDPOINT || "mongodb://127.0.0.1:27017/namespace";
+  },
+  get dbTableName() {
+    return process.env.DB_TABLENAME || /* istanbul ignore next */ "entities";
+  },
+  get dbModelName() {
+    return process.env.DB_MODELNAME || /* istanbul ignore next */ "Entity";
+  },
 };

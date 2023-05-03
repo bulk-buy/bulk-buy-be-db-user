@@ -8,6 +8,7 @@
  * Node dependencies.
  */
 
+const { exec } = require("child_process");
 const process = require("node:process");
 
 // ===============
@@ -27,6 +28,10 @@ const clearRequireCache = function () {
 // ===============
 
 // using defaults from config
+exec("mongo namespace --eval 'db.entities.drop()'");
 delete process.env.PORT;
+process.env.DB_TABLENAME = "entities";
+process.env.DB_MODELNAME = "Entity";
 clearRequireCache();
-require("./core");
+require("./core"); /* eslint-disable-line import/newline-after-import */
+exec("mongo namespace --eval 'db.entities.drop()'");
